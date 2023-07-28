@@ -1,52 +1,35 @@
 //traemos el modulo de express
 const express = require('express');
-const faker  = require('faker');
+
+//importamos el servicio
+const ProductsService = require('./../services/products.services');
 
 //se crea un routing propio o especifico
 const router = express.Router();
 
+//se instancia el servicio
+const services = new ProductsService(); 
 
 router.get('/', (req, res) => {
-  const productos = [];
-  const {size} = req.query;
-  const limit = size || 10;
-
-  for (let index = 0; index < limit; index++) {
-    productos.push({
-      nombre: faker.commerce.productName(),
-      price: parseInt(faker.commerce.price(), 10),
-      image: faker.image.imageUrl()
-    })
-  }
-
-  res.json(productos);
+    //obtenemos directamamente del servicio
+    const products = services.find(); 
+    res.json(products);
 });
 
 
 //metodo get con codigo de estados
-//todos los parametros que se reciban por el metodo get o de tipo query se envian como string
 router.get('/:id', (req, res) => {
-  const { id } = req.params;
-  if (id === '999') {
-    res.status(404).json({
-      message: 'Not Found'
-    });
-  } else {
-    res.status(200).json({
-      id,
-      name: 'Product 2',
-      price: 2000
-    });
-  }
+    const { id } = req.params;
+    const product = services.findOne(id);
+
+    res.json(product);
 })
 
 //metodo post
 router.post('/', (req, res) => {
   const body = req.body;
-  res.json({
-    message: 'created',
-    data: body
-  })
+  const newProduct = services.create(body);
+  res.json(newProduct);
 })
 
 //metodo patch: actualiza parcialmente
@@ -72,3 +55,20 @@ router.delete('/:id', (req, res) => {
 })
 
 module.exports = router;
+
+
+//todos los parametros que se reciban por el metodo get o de tipo query se envian como string
+// router.get('/:id', (req, res) => {
+//     const { id } = req.params;
+//     if (id === '999') {
+//       res.status(404).json({
+//         message: 'Not Found'
+//       });
+//     } else {
+//       res.status(200).json({
+//         id,
+//         name: 'Product 2',
+//         price: 2000
+//       });
+//     }
+//   })

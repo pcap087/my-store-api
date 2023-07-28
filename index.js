@@ -62,7 +62,7 @@ app.get('/', (req, res) => {
 
 
 app.listen(port, () => {
-  console.log('Mi puerto' + port);
+  console.log('Mi puerto ' + port);
 });
 
 
