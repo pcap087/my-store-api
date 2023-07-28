@@ -23,8 +23,21 @@ router.get('/', (req, res) => {
 });
 
 
-router.get('/filter', (req, res) => {
-  res.send('Yo soy un filtro');
+//metodo get con codigo de estados
+//todos los parametros que se reciban por el metodo get o de tipo query se envian como string
+router.get('/:id', (req, res) => {
+  const { id } = req.params;
+  if (id === '999') {
+    res.status(404).json({
+      message: 'Not Found'
+    });
+  } else {
+    res.status(200).json({
+      id,
+      name: 'Product 2',
+      price: 2000
+    });
+  }
 })
 
 //metodo post
