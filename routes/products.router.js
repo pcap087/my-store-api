@@ -36,4 +36,26 @@ router.post('/', (req, res) => {
   })
 })
 
+//metodo patch: actualiza parcialmente
+//no es necesario enviar todos los atributos, recibe el objeto de forma parcial
+router.patch('/:id', (req, res) => {
+  //const { id }  = req.params;
+  //const body    = req.body;
+  const { body, params: { id }} = req;
+  res.json({
+    message: 'updated',
+    data: body,
+    id
+  })
+})
+
+//metodo delete: borra un registro
+router.delete('/:id', (req, res) => {
+  const { id }  = req.params;
+  res.json({
+    message: 'registro eliminado',
+    id
+  })
+})
+
 module.exports = router;
