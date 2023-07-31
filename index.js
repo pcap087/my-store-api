@@ -1,6 +1,7 @@
 //traemos el modulo de express
 const express = require('express');
 const routerApi = require('./routes');
+const { logErrors, errorHandler, boomErrorHandler } = require('./middlewares/error.handler');
 
 //creamos una aplicacion
 const app = express();
@@ -17,6 +18,10 @@ app.use(express.json());
 app.get('/', (req, res) => {
   res.send('Hola mi server en Express');
 });
+
+app.use(logErrors);
+app.use(boomErrorHandler);
+app.use(errorHandler);
 
 
 // app.get('/nacionalidad', (req, res) => {

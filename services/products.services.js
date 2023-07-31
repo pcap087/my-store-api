@@ -1,4 +1,5 @@
 const faker = require('faker');
+const boom = require('@hapi/boom');
 
 class ProductsService {
     constructor(){
@@ -13,12 +14,13 @@ class ProductsService {
                 id: faker.datatype.uuid(),
                 nombre: faker.commerce.productName(),
                 price: parseInt(faker.commerce.price(), 10),
-                image: faker.image.imageUrl()
+                image: faker.image.imageUrl(),
+                isBlock: faker.datatype.boolean()
             })
         }
     }
 
-    create(data){
+    async create(data){
         const newProduct = {
             id: faker.datatype.uuid(),
             ...data
@@ -29,29 +31,45 @@ class ProductsService {
 
     //obtener la lista de productos
     find(){
+        return new Promise((resolve, reject) => {
+            setTimeout(() => {
+                resolve(this.products)
+            }, 5000)
+        })
         return this.products;
     }
 
 
-    findOne(id){
-        return this.products.find(item => item.id === id);
+    async findOne(id){
+       const product = this.products.find(item => item.id === id);
+        if(!product){
+            throw boom.notFound('product not found')
+        }
+        return product;
     }
 
-    update(id, changes){
+    async update(id, changes){
         const index = this.products.findIndex(item => item.id === id);
         if (index === -1){
-            throw new Error('product not found');
+            throw boom.notFound('product not found')
         }
-        this.products[index] = changes;
+        const producto =  this.products[index];
+
+        this.products[index] = {
+            ...producto,
+            ...changes
+        };
         return this.products[index] 
-
-
     }
 
-    delete(){
-
+    async delete(id){
+        const index = this.products.findIndex(item => item.id === id);
+        if (index === -1){
+            throw boom.notFound('product not found')
+        }
+        this.products.splice(index, 1);
+        return {id}
     }
-
 }
 
 module.exports = ProductsService;

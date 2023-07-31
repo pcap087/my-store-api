@@ -10,48 +10,53 @@ const router = express.Router();
 //se instancia el servicio
 const services = new ProductsService(); 
 
-router.get('/', (req, res) => {
+router.get('/', async(req, res) => {
     //obtenemos directamamente del servicio
-    const products = services.find(); 
+    const products = await services.find(); 
     res.json(products);
 });
 
 
 //metodo get con codigo de estados
-router.get('/:id', (req, res) => {
-    const { id } = req.params;
-    const product = services.findOne(id);
-
-    res.json(product);
+router.get('/:id', async(req, res, next) => {
+   try {
+        const { id } = req.params;
+        const product = await services.findOne(id);
+        res.json(product);
+   } catch (error) {
+        next(error);
+   }
 })
 
 //metodo post
-router.post('/', (req, res) => {
+router.post('/', async (req, res) => {
   const body = req.body;
-  const newProduct = services.create(body);
+  const newProduct = await services.create(body);
   res.json(newProduct);
 })
 
 //metodo patch: actualiza parcialmente
 //no es necesario enviar todos los atributos, recibe el objeto de forma parcial
-router.patch('/:id', (req, res) => {
+router.patch('/:id', async (req, res, next) => {
   //const { id }  = req.params;
   //const body    = req.body;
-  const { body, params: { id }} = req;
-  res.json({
-    message: 'updated',
-    data: body,
-    id
-  })
+
+    try {
+        const { body, params: { id }} = req;
+        const product = await services.update(id, body);
+        res.json(product);
+
+    } catch(error){
+
+        next(error);
+    }
 })
 
 //metodo delete: borra un registro
-router.delete('/:id', (req, res) => {
-  const { id }  = req.params;
-  res.json({
-    message: 'registro eliminado',
-    id
-  })
+router.delete('/:id', async (req, res) => {
+    const { id }  = req.params;
+    const rta =  await services.delete(id);
+    res.json(rta);
 })
 
 module.exports = router;
